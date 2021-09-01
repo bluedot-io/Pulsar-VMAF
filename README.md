@@ -307,11 +307,17 @@ You can find the "cred.json" in your download folder.
 
 <img src="images/xilinx_appstore_access_key.png" width="20%">
 
+
 #### Contact us
-Please email <info@blue-dot.io> for us to share the Pulsar-VMAF to you.
+
+Please email <info@blue-dot.io> for us to share the Pulsar-VMAF to you.  
+
+YOU CAN MOVE ON NEXT STEP AFTER GETTING A CONFIRMATION EMAIL.
+
 ---
-**Note**
-Pulsar-VMAF is not regitered to Xilinx Appstore yet but in progress.
+:information_source:  
+Pulsar-VMAF is not regitered to Xilinx Appstore yet but in progress.<br/>
+Until finishing the work, we need to give your account permission to find the product in Xilinx Appstore.
 
 ---
 
@@ -343,14 +349,14 @@ $ sudo yum install ffmpeg-bluedot
 
 ### 2.2.3 HOW TO EVALUATE
 #### Setting up Xilinx runtime environment
-The Pulsar-VMAF library(libbdvmaf) uses Xilinx XRT libraries and environment variables. 
+The Pulsar-VMAF library(libbdvmaf) uses Xilinx XRT libraries and environment variables.<br/> 
 Before evaluating it, please run the following command line.
 ```bash
 $ source /opt/xilinx/xrt/setup.sh
 ```
 
 #### Executing DRM manager
-The DRM manager activates Pulsar-VMAF with conf.json and cred.json which you downloaded from the Xilinx appstore.
+The DRM manager activates Pulsar-VMAF with conf.json and cred.json which you downloaded from the Xilinx appstore.<br/>
 You should copy conf.json and cred.json in the working directory beacuse the DRM manager will find them there.
 
 Please open your terminal for the DRM manager.
@@ -507,4 +513,4 @@ Comming soon :)
 
 # 5 CONTACT US
 
-For technical issues, feel free to email us at <info@blue-dot.io>
+For evaluation or technical issues, feel free to email us at <info@blue-dot.io>
