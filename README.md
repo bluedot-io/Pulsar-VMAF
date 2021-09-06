@@ -272,8 +272,8 @@ $ ffmpeg -I 2160_dst.mp4 2160_dst.yuv
 ```
 Run the following command to measure VMAF score of those raw videos.   
 ```bash
-$ ffmpeg -stream_loop 99 -pix_fmt yuv420p -s 3840x2160 -i 2160_dst.yuv - stream_loop 99 -s 3840x2160 -pix_fmt yuv420p 
--i 2160.yuv -lavfi libbdvmaf=model_path=vmaf_v0.6.1.json:kernel_path=f1_binary.xclbin:coreno=1: shortest=1 -f null -
+$ ffmpeg -stream_loop 99 -pix_fmt yuv420p -s 3840x2160 -i 2160_dst.yuv -stream_loop 99 -s 3840x2160 -pix_fmt yuv420p 
+-i 2160.yuv -lavfi libbdvmaf=model_path=vmaf_v0.6.1.json:kernel_path=f1_binary.xclbin:coreno=1:shortest=1 -f null -
 ```
 The same score as the case of compressed videos is reported, and the speed is a little bit better due to less computation load on the CPUs.
 #### Running two kernels
@@ -508,8 +508,106 @@ EC2 F1 Instance details (https://aws.amazon.com/ec2/instance-types/f1/)
 <br/>
 
 # 4 REST API
+Pulsar-VMAF provides REST API.
 
-Comming soon :)
+--- 
+**Note** 
+> Current version of the REST API is alpha release. We're working on adding more useful functionalities and making it stable.
+
+---
+
+## 4.1 HOWTO
+### Creating an account
+You can create your account using the REST API.
+```bash
+$ curl https://api.kokoon.cloud/auth/signup -X POST \
+-H 'Content-Type: application/json' \
+-d '{"email": "<email address>", "password": "<password>", "nickname": "<nickname>"}'
+
+-- response --
+
+"" <-- success message
+```
+
+You'll get empty message with the status code of 200 if no error.
+To verify your email address, we send an email to your email address with a verification code.
+Once you receive the verification code, send us the code using the REST API as the following to activate your account
+```bash
+$ curl https://api.kokoon.cloud/auth/signup/confirm -X POST \
+-H 'Content-Type: application/json' \
+-d '{"email": "<email address>", "code": "<confirmation code>"}'
+
+-- response --
+
+"" <-- success message
+```
+It is success if the API returns empty message.
+
+
+### Login
+You need to get a JWT key to access the REST APIs. You can simply get the JWT key as the following:
+```bash
+$ curl https://api.kokoon.cloud/auth -X POST --user '<email address>:<your password>'
+
+-- response --
+{"id": "17xxxxd2-3xx4-4xx0-8xx4-3xxxxxxxxxx2", "token": "eyJraWQiOiJxTHJoRVp5bTFDODF0NkJvVlVxVExxU2s2QUJTWGVWTjRQbU1LcW9aSEFFPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIxN2Y0OGRkMi0zMjk0LTQ4ZTAtO...-yMkzfA4DTnNOfZ0Og", "exp": 3600}
+```
+
+The API returns your id, JWT token and expiration time in second as the above.
+You should include the token for every HTTP requests. 
+
+### Executing Pulsar-VMAF
+The Pulsar-VMAF REST API requires two parameters: one is reference video, the other is distorted video.
+Each video can be accessible through HTTP protocol.
+
+```bash
+curl https://api.kokoon.cloud/vmaf -X POST \
+-H 'Content-Type: application/json' \
+-H 'Authorization: bearer eeyJraWQiOiJxTHJoRVp5bTFDODF0NkJvVlVxVExxU2s2QUJTWGVWTjRQbU1LcW9aSEFFPSIsImFsZyI6IlJTMjU2In0
+.eyJzdWIiOiIxN2Y0OGRkMi0zMjk0LTQ4ZTAtO...-yMkzfA4DTnNOfZ0Og' \
+-d '{"ref": "https://s3.amazonaws.com/mytest/reference.mp4", "dst": "https://s3.amazonaws.com/mytest/distortion.mp4"}'
+
+-- response --
+{"task_id": "9ffc50e2-5197-34bb-aaf6-cd1da79f591b", "update_period": 5, "progress": "in-queue"}
+```
+
+Once the task is finished, you'll receive an email as following:
+```
+Hello,
+
+Your job has been done.
+
+
+
+Task ID: 9ffc50e2-5197-34bb-aaf6-cd1da79f591b
+Reference video: https://s3.amazonaws.com/mytest/reference.mp4
+Distorted video: https://s3.amazonaws.com/mytest/distortion.mp4
+
+VMAF Score: 75.637862
+LOG URL   : /fileurl/vmaf/9f971f82-0ecb-11ec-b399-0e1904df6487
+```
+
+### Downloading the log file 
+You can get download url by the following command line.
+```bash
+curl https://api.kokoon.cloud/fileurl/vmaf/9f971f82-0ecb-11ec-b399-0e1904df6487 -X POST \
+-H 'Content-Type: application/json' \
+-H 'Authorization: bearer eeyJraWQiOiJxTHJoRVp5bTFDODF0NkJvVlVxVExxU2s2QUJTWGVWTjRQbU1LcW9aSEFFPSIsImFsZyI6IlJTMjU2In0
+.eyJzdWIiOiIxN2Y0OGRkMi0zMjk0LTQ4ZTAtO...-yMkzfA4DTnNOfZ0Og' 
+
+-- response --
+{"download_url": "https://startrekapp152952-prod.s3.amazonaws.com/private/us-east-1%3A08920b4c-885d-4173-86f9-f85f85305b90/vmaf/log/238da3ac-0e99-11ec-879e-0ef222c9480d?AWSAccessKeyId=AS...CBB75&Signature=7ihve2PPG%2BDUwGlj4qDw8sjXpTY%3D&x-amz-security-token=FwoGZXIvYXdzEDAaDNMKmxB...coiYbViQYyKJ57Hpw88vT%2BOV3rhMiurzbxmx%2Fprp6tirQcSgL4qOfkSDh0%2B1Nw6Bc%3D&Expires=1630885114"}
+```
+
+Now you can download log file the value of "download_url" from the above result.
+
+```bash
+curl -o result.log https://startrekapp152952-prod.s3.amazonaws.com/private/us-east-1%3A08920b4c-885d-4173-86f9-f85f85305b90/vmaf/log/238da3ac-0e99-11ec-879e-0ef222c9480d?AWSAccessKeyId=AS...CBB75&Signature=7ihve2PPG%2BDUwGlj4qDw8sjXpTY%3D&x-amz-security-token=FwoGZXIvYXdzEDAaDNMKmxB...coiYbViQYyKJ57Hpw88vT%2BOV3rhMiurzbxmx%2Fprp6tirQcSgL4qOfkSDh0%2B1Nw6Bc%3D&Expires=1630885114
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  109k  100  109k    0     0  69929      0  0:00:01  0:00:01 --:--:-- 69886
+```
 
 # 5 CONTACT US
 
