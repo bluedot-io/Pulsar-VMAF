@@ -381,7 +381,9 @@ To stop the DRM manager, please press CTRL+C.
 #### Measuring VMAF of compressed videos using one kernel
 Open another terminal then type the following command line.
 ```bash
-$ ffmpeg -i <transcoded_video_path> -vsync 0 -i <original_video_path> -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:coreno=1 -f null -
+$ ffmpeg -i <transcoded_video_path> -vsync 0 -i <original_video_path> -vsync 0 -lavfi \
+libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot\
+/libbdvmaf/u50_binary.xclbin:coreno=1 -f null -
 ```
 - -coreno=[1|2]: an option to specify which of two kernels is used for the acceleration  
 - <original_video_path>: a video file as reference one
@@ -550,7 +552,7 @@ You need to get a JWT key to access the REST APIs. You can simply get the JWT ke
 $ curl https://api.kokoon.cloud/auth -X POST --user '<email address>:<your password>'
 
 -- response --
-{"id": "17xxxxd2-3xx4-4xx0-8xx4-3xxxxxxxxxx2", "token": "eyJraWQiOiJxTHJoRVp5bTFDODF0NkJvVlVxVExxU2s2QUJTWGVWTjRQbU1LcW9aSEFFPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIxN2Y0OGRkMi0zMjk0LTQ4ZTAtO...-yMkzfA4DTnNOfZ0Og", "exp": 3600}
+{"id": "17xxxxd2-3xx4-4xx0-8xx4-3xxxxxxxxxx2", "token": "eyJraWQiO...-yMkzfA4DTnNOfZ0Og", "exp": 3600}
 ```
 
 The API returns your id, JWT token and expiration time in second as the above.
@@ -563,8 +565,7 @@ Each video can be accessible through HTTP protocol.
 ```bash
 curl https://api.kokoon.cloud/vmaf -X POST \
 -H 'Content-Type: application/json' \
--H 'Authorization: bearer eeyJraWQiOiJxTHJoRVp5bTFDODF0NkJvVlVxVExxU2s2QUJTWGVWTjRQbU1LcW9aSEFFPSIsImFsZyI6IlJTMjU2In0
-.eyJzdWIiOiIxN2Y0OGRkMi0zMjk0LTQ4ZTAtO...-yMkzfA4DTnNOfZ0Og' \
+-H 'Authorization: bearer eeyJra.eyJzdWIiOiIxN2Y0OGRkMi0zMjk0LTQ4ZTAtO...-yMkzfA4DTnNOfZ0Og' \
 -d '{"ref": "https://s3.amazonaws.com/mytest/reference.mp4", "dst": "https://s3.amazonaws.com/mytest/distortion.mp4"}'
 
 -- response --
@@ -592,17 +593,23 @@ You can get download url by the following command line.
 ```bash
 curl https://api.kokoon.cloud/fileurl/vmaf/9f971f82-0ecb-11ec-b399-0e1904df6487 -X POST \
 -H 'Content-Type: application/json' \
--H 'Authorization: bearer eeyJraWQiOiJxTHJoRVp5bTFDODF0NkJvVlVxVExxU2s2QUJTWGVWTjRQbU1LcW9aSEFFPSIsImFsZyI6IlJTMjU2In0
-.eyJzdWIiOiIxN2Y0OGRkMi0zMjk0LTQ4ZTAtO...-yMkzfA4DTnNOfZ0Og' 
+-H 'Authorization: bearer eeyJraWQiOiJxTHJoRVp5bTFDODF0NkJvVlVxVExxU2s2QUJTWGVWTjRQbU1LcW9aSEF
+FPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIxN2Y0OGRkMi0zMjk0LTQ4ZTAtO...-yMkzfA4DTnNOfZ0Og' 
 
 -- response --
-{"download_url": "https://startrekapp152952-prod.s3.amazonaws.com/private/us-east-1%3A08920b4c-885d-4173-86f9-f85f85305b90/vmaf/log/238da3ac-0e99-11ec-879e-0ef222c9480d?AWSAccessKeyId=AS...CBB75&Signature=7ihve2PPG%2BDUwGlj4qDw8sjXpTY%3D&x-amz-security-token=FwoGZXIvYXdzEDAaDNMKmxB...coiYbViQYyKJ57Hpw88vT%2BOV3rhMiurzbxmx%2Fprp6tirQcSgL4qOfkSDh0%2B1Nw6Bc%3D&Expires=1630885114"}
+{"download_url": "https://startrekapp152952-prod.s3.amazonaws.com/private/us-east-1%3A08920b4c
+-885d-4173-86f9-f85f85305b90/vmaf/log/238da3ac-0e99-11ec-879e-0ef222c9480d?AWSAccessKeyId=AS...
+CBB75&Signature=7ihve2PPG%2BDUwGlj4qDw8sjXpTY%3D&x-amz-security-token=FwoGZXIvYXdzEDAaDNMKmxB...
+coiYbViQYyKJ57Hpw88vT%2BOV3rhMiurzbxmx%2Fprp6tirQcSgL4qOfkSDh0%2B1Nw6Bc%3D&Expires=1630885114"}
 ```
 
 Now you can download log file the value of "download_url" from the above result.
 
 ```bash
-curl -o result.log https://startrekapp152952-prod.s3.amazonaws.com/private/us-east-1%3A08920b4c-885d-4173-86f9-f85f85305b90/vmaf/log/238da3ac-0e99-11ec-879e-0ef222c9480d?AWSAccessKeyId=AS...CBB75&Signature=7ihve2PPG%2BDUwGlj4qDw8sjXpTY%3D&x-amz-security-token=FwoGZXIvYXdzEDAaDNMKmxB...coiYbViQYyKJ57Hpw88vT%2BOV3rhMiurzbxmx%2Fprp6tirQcSgL4qOfkSDh0%2B1Nw6Bc%3D&Expires=1630885114
+curl -o result.log https://startrekapp152952-prod.s3.amazonaws.com/private/us-east-1%3A08920b4c-
+885d-4173-86f9-f85f85305b90/vmaf/log/238da3ac-0e99-11ec-879e-0ef222c9480d?AWSAccessKeyId=AS...CB
+B75&Signature=7ihve2PPG%2BDUwGlj4qDw8sjXpTY%3D&x-amz-security-token=FwoGZXIvYXdzEDAaDNMKmxB...co
+iYbViQYyKJ57Hpw88vT%2BOV3rhMiurzbxmx%2Fprp6tirQcSgL4qOfkSDh0%2B1Nw6Bc%3D&Expires=1630885114
 
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
