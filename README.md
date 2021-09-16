@@ -603,7 +603,7 @@ CBB75&Signature=7ihve2PPG%2BDUwGlj4qDw8sjXpTY%3D&x-amz-security-token=FwoGZXIvYX
 coiYbViQYyKJ57Hpw88vT%2BOV3rhMiurzbxmx%2Fprp6tirQcSgL4qOfkSDh0%2B1Nw6Bc%3D&Expires=1630885114"}
 ```
 
-Now you can download log file the value of "download_url" from the above result.
+Now you can download log file from "download_url" of the above result.
 
 ```bash
 curl -o result.log https://startrekapp152952-prod.s3.amazonaws.com/private/us-east-1%3A08920b4c-
@@ -618,4 +618,5 @@ iYbViQYyKJ57Hpw88vT%2BOV3rhMiurzbxmx%2Fprp6tirQcSgL4qOfkSDh0%2B1Nw6Bc%3D&Expires
 
 # 5 CONTACT US
 
-For evaluation or technical issues, feel free to email us at <info@blue-dot.io>
+For evaluation of the product, please visit https://blue-dot.io/Evaluation.
+For technical problems and questions, feel free to email us at <info@blue-dot.io>
