@@ -9,8 +9,9 @@
 &emsp;&emsp;[2.1.1 INSTALLATION](#211-installation)<br/>
 &emsp;&emsp;[2.1.2 HOW TO EVALUATE](#212-how-to-evaluate)<br/>
 &emsp;[2.2 ALVEO U50](#22-alveo-u50)<br/>
-&emsp;&emsp;[2.2.1 INSTALLATION](#221-installation)<br/>
-&emsp;&emsp;[2.2.2 HOW TO EVALUATE](#222-how-to-evaluate)<br/>
+&emsp;&emsp;[2.2.1 GETTING A CREDENTIAL FILE](#221-getting-a-credential-file)<br/>
+&emsp;&emsp;[2.2.2 INSTALLATION](#222-installation)<br/>
+&emsp;&emsp;[2.2.3 HOW TO EVALUATE](#223-how-to-evaluate)<br/>
 [3 DUAL-KERNEL PERFORMANCE IN AWS EC2 F1 INSTANCE](#3-dual-kernel-performance-in-aws-ec2-f1-instance)<br/>
 [4 REST API](#4-rest-api)<br/>
 [5 CONTACT US](#5-contact-us)
@@ -228,32 +229,58 @@ video:7852kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing 
 [Parsed_libbdvmaf_0 @ 0x759d0c0] Total number of processed frames: 15000
 [Parsed_libbdvmaf_0 @ 0x759d0c0] AVG. VMAF Score: 87.467400
 ```
-VMAF score for each frame is reported in vmaf_result.log.
+If you want to output scores of models per frame to a file, use "log_path" and "log_fmt" options as the following:
+```bash
+$ ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 \
+-vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:coreno=1: \
+log_path=log.json:log_fmt=json -f null -
 ```
- No     ,VMAF_SCORE,      ADM,      MPCD,      VIF0,     VIF1,     VIF2,     VIF3
-       1, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-       2, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-       3, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-       4, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-       5, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-       6, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-       7, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-       8, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-       9, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-      10, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-      11, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-      12, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-      13, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-      14, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-      15, 100.000000, 0.999393, -0.013368, 1.000000, 1.000000, 1.000000, 1.000000
-      16,  97.566488, 0.989950,  0.016739, 0.966534, 0.971284, 0.966479, 0.956362
-      17,  95.701617, 0.955964,  0.047799, 0.920853, 0.968059, 0.976636, 0.980954
-      18,  91.206519, 0.915715,  0.047799, 0.888859, 0.950970, 0.964046, 0.972741
-      19,  89.406490, 0.900099,  0.044391, 0.864948, 0.941914, 0.958319, 0.969590
-      20,  87.550198, 0.884437,  0.044391, 0.851716, 0.933523, 0.950860, 0.964334
-      21,  88.349822, 0.890306,  0.036409, 0.844602, 0.937484, 0.956597, 0.969954
-      22,  87.973880, 0.902339,  0.036409, 0.831304, 0.921736, 0.936173, 0.943120
-      23,  89.972499, 0.910653,  0.029094, 0.836976, 0.935244, 0.953273, 0.966493
+The supported output formats are json, xml and csv.
+
+The following is an example of output with "log_fmt=json" option.
+```
+{
+  "version": "2.2.0 based H/W",
+  "frames": [
+    {
+      "frameNum": 0,
+      "metrics": {
+        "integer_adm2": 1.000000,
+        "integer_adm_scale0": 1.000000,
+        "integer_adm_scale1": 1.000000,
+        "integer_adm_scale2": 1.000000,
+        "integer_adm_scale3": 1.000000,
+        "integer_motion2": 0.000000,
+        "integer_motion": 0.000000,
+        "integer_vif_scale0": 1.000000,
+        "integer_vif_scale1": 1.000000,
+        "integer_vif_scale2": 1.000000,
+        "integer_vif_scale3": 1.000000,
+        "vmaf": 100.000000
+      }
+
+...
+
+  "pooled_metrics": {
+    "integer_adm2": {
+      "min": 0.858771,
+      "max": 1.062500,
+      "mean": 0.954343,
+      "harmonic_mean": 0.953602
+    },
+    "integer_adm_scale0": {
+      "min": 0.979701,
+      "max": 1.023748,
+      "mean": 0.999715,
+      "harmonic_mean": 0.999673
+    },
+    "integer_adm_scale1": {
+      "min": 0.915208,
+      "max": 1.059503,
+      "mean": 0.973407,
+      "harmonic_mean": 0.972973
+    },
+...
 ```
 
 ---
