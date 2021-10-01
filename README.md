@@ -216,11 +216,9 @@ In one f1.2xlarge instance, two kernels are instantiated. The following examples
 In the AMI installed, two video bistreams, 2160.mp4 and 2160_dst.mp4, are provided for examples.
 #### Measuring VMAF of compressed videos using one kernel
 ```bash
-$ ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 \
--vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:coreno=1 -f null -
+$ ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
 ```
 - -stream_loop: an option to specify the number of repetition (you can remove it). In the above command, the video streams are decoded 100 times.
-- -coreno=[1|2]: an option to specify which of two kernels is used for the acceleration  
 
 When ffmpeg finishes, a fps and an average VMAF score is reported on the screen.
 ```
@@ -232,8 +230,7 @@ video:7852kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing 
 If you want to output scores of models per frame to a file, use "log_path" and "log_fmt" options as the following:
 ```bash
 $ ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 \
--vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:coreno=1: \
-log_path=log.json:log_fmt=json -f null -
+-vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin log_path=log.json:log_fmt=json -f null -
 ```
 The supported output formats are json, xml and csv.
 
@@ -300,13 +297,13 @@ $ ffmpeg -I 2160_dst.mp4 2160_dst.yuv
 Run the following command to measure VMAF score of those raw videos.   
 ```bash
 $ ffmpeg -stream_loop 99 -pix_fmt yuv420p -s 3840x2160 -i 2160_dst.yuv -stream_loop 99 -s 3840x2160 -pix_fmt yuv420p 
--i 2160.yuv -lavfi libbdvmaf=model_path=vmaf_v0.6.1.json:kernel_path=f1_binary.xclbin:coreno=1:shortest=1 -f null -
+-i 2160.yuv -lavfi libbdvmaf=model_path=vmaf_v0.6.1.json:kernel_path=f1_binary.xclbin:shortest=1 -f null -
 ```
 The same score as the case of compressed videos is reported, and the speed is a little bit better due to less computation load on the CPUs.
 #### Running two kernels
 ```bash
-$ ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:coreno=1 -f null -
-$ ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:coreno=2 -f null -
+$ ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
+$ ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
 ```
 ## 2.2 ALVEO U50
 Pulsar-VMAF supports on-premis environment using Xilinx Alveo U50 card.
@@ -408,11 +405,9 @@ To stop the DRM manager, please press CTRL+C.
 #### Measuring VMAF of compressed videos using one kernel
 Open another terminal then type the following command line.
 ```bash
-$ ffmpeg -i <transcoded_video_path> -vsync 0 -i <original_video_path> -vsync 0 -lavfi \
-libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot\
-/libbdvmaf/u50_binary.xclbin:coreno=1 -f null -
+$ ffmpeg -i <transcoded_video_path> -vsync 0 -i <original_video_path> -vsync 0 -lavfi  libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot\
+/libbdvmaf/u50_binary.xclbin -f null -
 ```
-- -coreno=[1|2]: an option to specify which of two kernels is used for the acceleration  
 - <original_video_path>: a video file as reference one
 - <transcoded_video_path>: a transcoded video file from the original video file. If you have no transcoded one you can create it easily using ffmpeg as the following.
 ```bash
@@ -433,14 +428,13 @@ $ ffmpeg -i <transcoded_video_path> distorted.yuv
 ```
 Run the following command to measure VMAF score of those raw videos.   
 ```bash
-$ ffmpeg -pix_fmt yuv420p -s 3840x2160 -i distorted.yuv -s 3840x2160 -pix_fmt yuv420p -i reference.yuv \
--lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:coreno=1:shortest=1 -f null -
+$ ffmpeg -pix_fmt yuv420p -s 3840x2160 -i distorted.yuv -s 3840x2160 -pix_fmt yuv420p -i reference.yuv -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:shortest=1 -f null -
 ```
 The same score as the case of compressed videos is reported, and the speed is a little bit better due to less computation load on the CPUs.
 #### Running two kernels
 ```bash
-$ ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/etc/blutdoeedot/libbdvmaf/u50_binary.xclbin:coreno=1 -f null -
-$ ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/etc/blutdoeedot/libbdvmaf/u50_binary.xclbin:coreno=2 -f null -
+$ ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/etc/blutdoeedot/libbdvmaf/u50_binary.xclbin -f null -
+$ ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/etc/blutdoeedot/libbdvmaf/u50_binary.xclbin -f null -
 ```
 # 3 DUAL-KERNEL PERFORMANCE IN AWS EC2 F1 INSTANCE
 In case that VMAF is measured for raw videos, the accelerator shows almost the best performance because there
