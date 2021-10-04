@@ -230,7 +230,7 @@ video:7852kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing 
 If you want to output scores of models per frame to a file, use "log_path" and "log_fmt" options as the following:
 ```bash
 $ ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 \
--vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin log_path=log.json:log_fmt=json -f null -
+-vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:log_path=log.json:log_fmt=json -f null -
 ```
 The supported output formats are json, xml and csv.
 
