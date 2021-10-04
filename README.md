@@ -180,7 +180,7 @@ Launch the instance you created after review and further configuration if necess
 ##### Step 4. Connect to your instance
 There are a few ways to connect the instance. Here is an example for the connection to an instance using a private key file, specified when creating the instance, and its public DNS.
 ```bash
-$ ssh -i “your_keypair.pem” centos@ec2-12-345-678-901.compute-1.amazonaws.com
+ssh -i “your_keypair.pem” centos@ec2-12-345-678-901.compute-1.amazonaws.com
 ```
 You should replace the your_keypair.pem and the ce2-12-345-678-901.copmpute-1.amazonaws.com with yours.
 If it’s correctly created an instance and connected to it, you can see the following messages:
@@ -207,8 +207,8 @@ The list of files is as follows at the initial connection:
 ##### Step 5. Update software package
 Install the latest software package using the following commands:
 ```bash
-$ sudo yum install libbdvmaf-aws
-$ sudo yum install ffmpeg-bluedot
+sudo yum install libbdvmaf-aws
+sudo yum install ffmpeg-bluedot
 ```
 It’s now ready to evaluate the accelerator.
 ### 2.1.2 HOW TO EVALUATE
@@ -216,7 +216,7 @@ In one f1.2xlarge instance, two kernels are instantiated. The following examples
 In the AMI installed, two video bistreams, 2160.mp4 and 2160_dst.mp4, are provided for examples.
 #### Measuring VMAF of compressed videos using one kernel
 ```bash
-$ ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
+ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
 ```
 - -stream_loop: an option to specify the number of repetition (you can remove it). In the above command, the video streams are decoded 100 times.
 
@@ -229,8 +229,7 @@ video:7852kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing 
 ```
 If you want to output scores of models per frame to a file, use "log_path" and "log_fmt" options as the following:
 ```bash
-$ ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 \
--vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:log_path=log.json:log_fmt=json -f null -
+ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:log_path=log.json:log_fmt=json -f null -
 ```
 The supported output formats are json, xml and csv.
 
@@ -291,19 +290,18 @@ loading time of AFI(Amazon FPGA Image) into FPGA. The AFI is not loaded for the 
 #### Measuring VMAF of raw videos using one kernel
 The following example shows how to convert a compressed video to a raw video in YUV format.
 ```bash
-$ ffmpeg -i 2160.mp4 2160.yuv
-$ ffmpeg -I 2160_dst.mp4 2160_dst.yuv
+ffmpeg -i 2160.mp4 2160.yuv
+ffmpeg -I 2160_dst.mp4 2160_dst.yuv
 ```
 Run the following command to measure VMAF score of those raw videos.   
 ```bash
-$ ffmpeg -stream_loop 99 -pix_fmt yuv420p -s 3840x2160 -i 2160_dst.yuv -stream_loop 99 -s 3840x2160 -pix_fmt yuv420p 
--i 2160.yuv -lavfi libbdvmaf=model_path=vmaf_v0.6.1.json:kernel_path=f1_binary.xclbin:shortest=1 -f null -
+ffmpeg -stream_loop 99 -pix_fmt yuv420p -s 3840x2160 -i 2160_dst.yuv -stream_loop 99 -s 3840x2160 -pix_fmt yuv420p -i 2160.yuv -lavfi libbdvmaf=model_path=vmaf_v0.6.1.json:kernel_path=f1_binary.xclbin:shortest=1 -f null -
 ```
 The same score as the case of compressed videos is reported, and the speed is a little bit better due to less computation load on the CPUs.
 #### Running two kernels
 ```bash
-$ ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
-$ ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
+ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
+ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
 ```
 ## 2.2 ALVEO U50
 Pulsar-VMAF supports on-premis environment using Xilinx Alveo U50 card.
@@ -365,9 +363,9 @@ We are preparing the software packages for other linux distributions.
 - Install XRT runtime library from (XRT Github)(https://github.com/Xilinx/XRT)
 - Install the latest software package using the following commands:
 ```bash
-$ sudo yum-config-manager --add-repo http://bluedot-yum-repo.s3-website-us-east-1.amazonaws.com/bluedot-yum.repo
-$ sudo yum install libbdvmaf-u50
-$ sudo yum install ffmpeg-bluedot
+sudo yum-config-manager --add-repo http://bluedot-yum-repo.s3-website-us-east-1.amazonaws.com/bluedot-yum.repo
+sudo yum install libbdvmaf-u50
+sudo yum install ffmpeg-bluedot
 ```
 > :information_source: **Your system may require more rpm packages such as libXv, libav, etc for ffmpeg**
 
@@ -376,7 +374,7 @@ $ sudo yum install ffmpeg-bluedot
 The Pulsar-VMAF library(libbdvmaf) uses Xilinx XRT libraries and environment variables.<br/> 
 Before evaluating it, please run the following command line.
 ```bash
-$ source /opt/xilinx/xrt/setup.sh
+source /opt/xilinx/xrt/setup.sh
 ```
 
 #### Executing DRM manager
@@ -385,9 +383,9 @@ You should copy conf.json and cred.json in the working directory beacuse the DRM
 
 Please open your terminal for the DRM manager.
 ```bash
-$ cp /etc/bluedot/libbdvmaf/conf.json .
-$ cp <your_download_folder>/cred.json .
-$ bddrm.exe /etc/bluedot/libbdvmaf/u50_binary.xclbin
+cp /etc/bluedot/libbdvmaf/conf.json .
+cp <your_download_folder>/cred.json .
+bddrm.exe /etc/bluedot/libbdvmaf/u50_binary.xclbin
 ```
 You can see the following messsages if your credential file is valid.
 ```bash
@@ -405,13 +403,12 @@ To stop the DRM manager, please press CTRL+C.
 #### Measuring VMAF of compressed videos using one kernel
 Open another terminal then type the following command line.
 ```bash
-$ ffmpeg -i <transcoded_video_path> -vsync 0 -i <original_video_path> -vsync 0 -lavfi  libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot\
-/libbdvmaf/u50_binary.xclbin -f null -
+ffmpeg -i <transcoded_video_path> -vsync 0 -i <original_video_path> -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin -f null -
 ```
 - <original_video_path>: a video file as reference one
 - <transcoded_video_path>: a transcoded video file from the original video file. If you have no transcoded one you can create it easily using ffmpeg as the following.
 ```bash
-$ ffmpeg -i <original_video_path> -c:v libx264 -preset ultrafast -c:a copy transcoded_video.mp4
+ffmpeg -i <original_video_path> -c:v libx264 -preset ultrafast -c:a copy transcoded_video.mp4
 ```
 
 ---
@@ -423,18 +420,18 @@ distorted video first. It’s a requirement of ffmpeg.
 #### Measuring VMAF of raw videos using one kernel
 The following example shows how to convert a compressed video to a raw video in YUV format.
 ```bash
-$ ffmpeg -i <original_video_path> reference.yuv
-$ ffmpeg -i <transcoded_video_path> distorted.yuv
+ffmpeg -i <original_video_path> reference.yuv
+ffmpeg -i <transcoded_video_path> distorted.yuv
 ```
 Run the following command to measure VMAF score of those raw videos.   
 ```bash
-$ ffmpeg -pix_fmt yuv420p -s 3840x2160 -i distorted.yuv -s 3840x2160 -pix_fmt yuv420p -i reference.yuv -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:shortest=1 -f null -
+ffmpeg -pix_fmt yuv420p -s 3840x2160 -i distorted.yuv -s 3840x2160 -pix_fmt yuv420p -i reference.yuv -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:shortest=1 -f null -
 ```
 The same score as the case of compressed videos is reported, and the speed is a little bit better due to less computation load on the CPUs.
 #### Running two kernels
 ```bash
-$ ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/etc/blutdoeedot/libbdvmaf/u50_binary.xclbin -f null -
-$ ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/etc/blutdoeedot/libbdvmaf/u50_binary.xclbin -f null -
+ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/etc/blutdoeedot/libbdvmaf/u50_binary.xclbin -f null -
+ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/etc/blutdoeedot/libbdvmaf/u50_binary.xclbin -f null -
 ```
 # 3 DUAL-KERNEL PERFORMANCE IN AWS EC2 F1 INSTANCE
 In case that VMAF is measured for raw videos, the accelerator shows almost the best performance because there
@@ -508,7 +505,7 @@ Pulsar-VMAF provides REST API.
 ### Creating an account
 You can create your account using the REST API.
 ```bash
-$ curl https://api.kokoon.cloud/auth/signup -X POST \
+curl https://api.kokoon.cloud/auth/signup -X POST \
 -H 'Content-Type: application/json' \
 -d '{"email": "<email address>", "password": "<password>", "nickname": "<nickname>"}'
 
@@ -521,7 +518,7 @@ You'll get empty message with the status code of 200 if no error.
 To verify your email address, we send an email to your email address with a verification code.
 Once you receive the verification code, send us the code using the REST API as the following to activate your account
 ```bash
-$ curl https://api.kokoon.cloud/auth/signup/confirm -X POST \
+curl https://api.kokoon.cloud/auth/signup/confirm -X POST \
 -H 'Content-Type: application/json' \
 -d '{"email": "<email address>", "code": "<confirmation code>"}'
 
@@ -535,7 +532,7 @@ It is success if the API returns empty message.
 ### Login
 You need to get a JWT key to access the REST APIs. You can simply get the JWT key as the following:
 ```bash
-$ curl https://api.kokoon.cloud/auth -X POST --user '<email address>:<your password>'
+curl https://api.kokoon.cloud/auth -X POST --user '<email address>:<your password>'
 
 -- response --
 {"id": "17xxxxd2-3xx4-4xx0-8xx4-3xxxxxxxxxx2", "token": "eyJraWQiO...-yMkzfA4DTnNOfZ0Og", "exp": 3600}
