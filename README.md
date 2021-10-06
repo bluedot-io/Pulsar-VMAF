@@ -14,7 +14,8 @@
 &emsp;&emsp;[2.2.3 HOW TO EVALUATE](#223-how-to-evaluate)<br/>
 [3 DUAL-KERNEL PERFORMANCE IN AWS EC2 F1 INSTANCE](#3-dual-kernel-performance-in-aws-ec2-f1-instance)<br/>
 [4 REST API](#4-rest-api)<br/>
-[5 CONTACT US](#5-contact-us)
+[5 CHANGE LOG](#5-changelog)<br/>
+[6 CONTACT US](#6-contact-us)
 
 # 1 INTRODCUTION
 The Pulsar-VMAF is an hardware accelerator to measure VMAF(Video Multi-Method Assessment Fusion) for a
@@ -492,6 +493,7 @@ EC2 F1 Instance details (https://aws.amazon.com/ec2/instance-types/f1/)
 <img src="images/aws_f1_instances.png" width="70%">
 <br/>
 
+
 # 4 REST API
 Pulsar-VMAF provides REST API.
 
@@ -598,8 +600,17 @@ iYbViQYyKJ57Hpw88vT%2BOV3rhMiurzbxmx%2Fprp6tirQcSgL4qOfkSDh0%2B1Nw6Bc%3D&Expires
                                  Dload  Upload   Total   Spent    Left  Speed
 100  109k  100  109k    0     0  69929      0  0:00:01  0:00:01 --:--:-- 69886
 ```
+# 5 CHANGELOG
 
-# 5 CONTACT US
+## 5.1 libbdvmaf
+[0-9.10] 
+- Allocate a core automatically.
+## 5.2 ffmpeg-bluedot
+[1-0.9]
+- Removed coreno option of libbdvmaf filter.<br/>
+
+
+# 6 CONTACT US
 
 For evaluation of the product, please visit https://blue-dot.io/Evaluation.
 For technical problems and questions, feel free to email us at <info@blue-dot.io>
