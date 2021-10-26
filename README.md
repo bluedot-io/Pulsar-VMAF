@@ -186,17 +186,21 @@ ssh -i “your_keypair.pem” centos@ec2-12-345-678-901.compute-1.amazonaws.com
 You should replace the your_keypair.pem and the ce2-12-345-678-901.copmpute-1.amazonaws.com with yours.
 If it’s correctly created an instance and connected to it, you can see the following messages:
 ```
-| __| _ \/ __| /_\   |   \| __\ \ / /   /_\ |  \/  |_ _|
-| _||  _/ (_ |/ _ \  | |) | _| \ V /   / _ \| |\/| || |
-|_| |_|  \___/_/ \_\ |___/|___| \_/   /_/ \_\_|  |_|___|
-AMI Version:        1.10.0
-Xilinx Version:     2020.2
-Readme:             /home/centos/src/README.md
-AMI Release Notes:  /home/centos/src/RELEASE_NOTES.md
-GUI/Cluster setup:  https://github.com/aws/aws-fpga/blob/master/developer_resources
-Developer Support:  https://github.com/aws/aws-fpga/blob/master/README.md#developer-support
-Centos Common code: /srv/git/centos-git-common
-Xilinx XRT source:  https://github.com/Xilinx/XRT
+
+ _______  __   __  ___      _______  _______  ______           __   __  __   __  _______  _______
+|       ||  | |  ||   |    |       ||   _   ||    _ |         |  | |  ||  |_|  ||   _   ||       |
+|    _  ||  | |  ||   |    |  _____||  |_|  ||   | ||   ____  |  |_|  ||       ||  |_|  ||    ___|
+|   |_| ||  |_|  ||   |    | |_____ |       ||   |_||_ |____| |       ||       ||       ||   |___
+|    ___||       ||   |___ |_____  ||       ||    __  |       |       ||       ||       ||    ___|
+|   |    |       ||       | _____| ||   _   ||   |  | |        |     | | ||_|| ||   _   ||   |
+|___|    |_______||_______||_______||__| |__||___|  |_|         |___|  |_|   |_||__| |__||___|
+
+                                                                             https://blue-dot.io
+                                                                                info@blue-dot.io
+
+#### HOWTO ####
+ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/f1_binary.xclbin:log_path=test.xml -f null -
+You can run two ffmpegs in a f1.2xlarge, four ffmpegs in a f1.4xlarge
 ```
 The list of files is as follows at the initial connection:
 - 2160_dst.mp4 - distorted video of which quality is to be measured, playback time: 6sec @ 25fps
@@ -205,13 +209,6 @@ The list of files is as follows at the initial connection:
     + Refer to [https://github.com/Netflix/vmaf/blob/master/resource/doc/models.md](https://github.com/Netflix/vmaf/blob/master/resource/doc/models.md) for more details.
 - f1_binary.xclbin - AWS FPGA binary
 
-##### Step 5. Update software package
-Install the latest software package using the following commands:
-```bash
-sudo yum install libbdvmaf-aws
-sudo yum install ffmpeg-bluedot
-```
-It’s now ready to evaluate the accelerator.
 ### 2.1.2 HOW TO EVALUATE
 In one f1.2xlarge instance, two kernels are instantiated. The following examples show how to run one kernel and two kernels, respectively.  
 In the AMI installed, two video bistreams, 2160.mp4 and 2160_dst.mp4, are provided for examples.
