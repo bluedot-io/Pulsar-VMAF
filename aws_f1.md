@@ -1,7 +1,7 @@
 **Table Of Contents**
 
-[1.1 INSTALLATION](#11-installation)<br/>
-[1.2 HOW TO EVALUATE](#12-how-to-evaluate)<br/>
+[1 CREATING AN INSTANCE WITH PULSAR-VMAF AMI](#1-creating-an-instance-with-pulsar-vmaf-ami)<br/>
+[1 HOW TO EVALUATE](#2-how-to-evaluate)<br/>
 
 ---
 
@@ -60,7 +60,7 @@ The list of files is as follows at the initial connection:
     + Refer to [https://github.com/Netflix/vmaf/blob/master/resource/doc/models.md](https://github.com/Netflix/vmaf/blob/master/resource/doc/models.md) for more details.
 - /etc/bluedot/libbdvmaf/f1_binary.xclbin - AWS FPGA binary
 
-# 2 Usage
+# 2 How to evaluate
 In one f1.2xlarge instance, two kernels are instantiated. The following examples show how to run one kernel and two kernels, respectively.  
 In the AMI installed, two video bistreams, 2160.mp4 and 2160_dst.mp4, are provided for examples.
 #### Measuring VMAF of compressed videos using one kernel
