@@ -361,6 +361,8 @@ We are preparing the software packages for other linux distributions.
 - Install XRT runtime library from (XRT Github)(https://github.com/Xilinx/XRT)
 - Install the latest software package using the following commands:
 ```bash
+sudo yum-config-manager --add-repo https://tech.accelize.com/rpm/accelize_stable.repo
+sudo yum install -y libaccelize-drm
 sudo yum-config-manager --add-repo http://bluedot-yum-repo.s3-website-us-east-1.amazonaws.com/bluedot-yum.repo
 sudo yum install libbdvmaf-u50
 sudo yum install ffmpeg-bluedot
