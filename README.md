@@ -364,8 +364,9 @@ We are preparing the software packages for other linux distributions.
 sudo yum-config-manager --add-repo https://tech.accelize.com/rpm/accelize_stable.repo
 sudo yum install -y libaccelize-drm
 sudo yum-config-manager --add-repo http://bluedot-yum-repo.s3-website-us-east-1.amazonaws.com/bluedot-yum.repo
+sudo yum install epel-release
 sudo yum install libbdvmaf-u50
-sudo yum install ffmpeg-bluedot
+sudo yum install ffmpeg-bluedot-vmaf
 ```
 > :information_source: **Your system may require more rpm packages such as libXv, libav, etc for ffmpeg**
 
