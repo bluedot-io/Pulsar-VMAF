@@ -12,7 +12,7 @@
 # 1 Creating an instance with Pulsar-VMAF AMI
 ## PROCEDURE
 
-### Step 1. Choose the AMI we sahred
+### Step 1. Choose the AMI we shared
 - Click “Launch instance” in EC2 console
 - Type "Pulsar-VMAF" in the search box and select it.
 
