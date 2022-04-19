@@ -181,7 +181,7 @@ Launch the instance you created after review and further configuration if necess
 ##### Step 4. Connect to your instance
 There are a few ways to connect the instance. Here is an example for the connection to an instance using a private key file, specified when creating the instance, and its public DNS.
 ```bash
-ssh -i “your_keypair.pem” centos@ec2-12-345-678-901.compute-1.amazonaws.com
+ssh -i “your_keypair.pem” ec2-user@ec2-12-345-678-901.compute-1.amazonaws.com
 ```
 You should replace the your_keypair.pem and the ce2-12-345-678-901.copmpute-1.amazonaws.com with yours.
 If it’s correctly created an instance and connected to it, you can see the following messages:
