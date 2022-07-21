@@ -112,6 +112,21 @@ The following table shows the specification of Pulsar-VMAF targeted to Alveo U50
 - The performance was measured using the VMAF accelerator integrated in ffmpeg for both compressed and raw video cases.
 - ffmpeg version: git-2021-02-18-034e6e2
 
+### 1.1.1 Utilization for one vmaf kernel
+Utilization on AWS (VU9P)
+  
+| LUT | Register | DSP | BRAM36 | URAM |
+|----:|---------:|----:|-------:|-----:|
+| 192,121 | 358,995 | 1,927 | 383 | 56 |
+
+### 1.1.2 Bandwidth for one vmaf kernel
+- Condition : 4K@65fps (3840x2160) 
+- Measure of one vmaf kernel BW (without host BW)
+
+| Read BW [GBytes/s] | Write BW [GBytes/s] |
+|----------------:|----------------------:|
+| 3.74 | 2.66  |
+
 ## 1.2 Performance for various resolutions
 The following table shows the performance in fps for various resolutions with a single kernel activated:
 
