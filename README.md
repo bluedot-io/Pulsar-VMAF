@@ -8,10 +8,11 @@
 &emsp;[2.1 AWS F1 INSTANCE](#21-aws-f1-instance)<br/>
 &emsp;&emsp;[2.1.1 INSTALLATION](#211-installation)<br/>
 &emsp;&emsp;[2.1.2 HOW TO EVALUATE](#212-how-to-evaluate)<br/>
-&emsp;[2.2 ALVEO U50](#22-alveo-u50)<br/>
-&emsp;&emsp;[2.2.1 GETTING A CREDENTIAL FILE](#221-getting-a-credential-file)<br/>
-&emsp;&emsp;[2.2.2 INSTALLATION](#222-installation)<br/>
-&emsp;&emsp;[2.2.3 HOW TO EVALUATE](#223-how-to-evaluate)<br/>
+&emsp;[2.2 AWS Marketplace](#22-aws-marketplace)<br/>
+&emsp;[2.3 ALVEO U50](#22-alveo-u50)<br/>
+&emsp;&emsp;[2.3.1 GETTING A CREDENTIAL FILE](#221-getting-a-credential-file)<br/>
+&emsp;&emsp;[2.3.2 INSTALLATION](#222-installation)<br/>
+&emsp;&emsp;[2.3.3 HOW TO EVALUATE](#223-how-to-evaluate)<br/>
 [3 DUAL-KERNEL PERFORMANCE IN AWS EC2 F1 INSTANCE](#3-dual-kernel-performance-in-aws-ec2-f1-instance)<br/>
 [4 REST API](#4-rest-api)<br/>
 [5 CHANGE LOG](#5-changelog)<br/>
@@ -316,12 +317,21 @@ The same score as the case of compressed videos is reported, and the speed is a 
 ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
 ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
 ```
-## 2.2 ALVEO U50
+## 2.2 AWS Marketplace
+You can also evaluate Pulsar-VMAF trial version in AWS marketplace.
+
+Visit https://aws.amazon.com/marketplace/pp/prodview-j2x24yjmlehjw.
+
+<img src="images/pulsar-vmaf-aws-marketplace.png" width="50%">
+
+For instruction guide, please refer to [2.1.2 HOW TO EVALUATE](#212-how-to-evaluate)
+
+## 2.3 ALVEO U50
 Pulsar-VMAF supports on-premis environment using Xilinx Alveo U50 card.
 For more information about Xilinx Alveo U50 Accelator card, please visit the Xilinx website.
 [https://www.xilinx.com/products/boards-and-kits/alveo/u50.html](https://www.xilinx.com/products/boards-and-kits/alveo/u50.html)
 
-### 2.2.1 GETTING A CREDENTIAL FILE
+### 2.3.1 GETTING A CREDENTIAL FILE
 #### Creating account
 If you have no account for [Xilinx appstore](https://appstore.xilinx.com/), please visit the site.
 You can see the following sing-up page, then click "Create Account".
@@ -364,7 +374,7 @@ You can see Vmaf product. Click "SELECT" button.
 
 
 
-### 2.2.2 INSTALLATION
+### 2.3.2 INSTALLATION
 
 ---
 **Note**  
@@ -385,7 +395,7 @@ sudo yum install ffmpeg-bluedot-vmaf
 ```
 > :information_source: **Your system may require more rpm packages such as libXv, libav, etc for ffmpeg**
 
-### 2.2.3 HOW TO EVALUATE
+### 2.3.3 HOW TO EVALUATE
 #### Setting up Xilinx runtime environment
 The Pulsar-VMAF library(libbdvmaf) uses Xilinx XRT libraries and environment variables.<br/> 
 Before evaluating it, please run the following command line.
