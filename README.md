@@ -2,6 +2,8 @@
 
 [1 INTRODUCTION](#1-introduction)<br/>
 &emsp;[1.1 SPECIFICATION](#11-specification)<br/> 
+&emsp;&emsp;[1.1.1 UTILIZATION FOR ONE VMAF KERNEL](#111-utilization-for-one-vmaf-kernel)<br/>
+&emsp;&emsp;[1.1.2 BANDWIDTH FOR ONE VMAF KERNEL](#112-bandwidth-for-one-vmaf-kernel)<br/>
 &emsp;[1.2 PERFORMANCE FOR VARIOUS RESOLUTIONS](#12-performance-for-various-resolutions)<br/>
 &emsp;[1.3 BENCHMARK](#13-benchmark)<br/>
 [2 EVALUATION](#2-evaluation)<br/>
@@ -162,6 +164,10 @@ The following graph shows performances of the software on various EC2 instances 
 
 # 2 EVALUATION
 This chapter gives how to install and evaluate the Pulsar-VMAF accelerator using AWS F1 instance and Alveo U50. 
+
+You can also use BLUEDOT's vmaf accelerator using aws market place. please visit the site
+- [Pulsar-VMAF Video Quality Metric Accelerator AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-j2x24yjmlehjw?sr=0-1&ref_=beagle&applicationId=AWSMPContessa)
+
 ## 2.1 AWS F1 INSTANCE 
 For the evaluation, we provide a specific AMI(Amazon Machine Image) and AFI(Amazon FPGA Image).  
 <br/>
