@@ -2,6 +2,8 @@
 
 [1 INTRODUCTION](#1-introduction)<br/>
 &emsp;[1.1 SPECIFICATION](#11-specification)<br/> 
+&emsp;&emsp;[1.1.1 UTILIZATION FOR ONE VMAF KERNEL](#111-utilization-for-one-vmaf-kernel)<br/>
+&emsp;&emsp;[1.1.2 BANDWIDTH FOR ONE VMAF KERNEL](#111-bandwidth-for-one-vmaf-kernel)<br/>
 &emsp;[1.2 PERFORMANCE FOR VARIOUS RESOLUTIONS](#12-performance-for-various-resolutions)<br/>
 &emsp;[1.3 BENCHMARK](#13-benchmark)<br/>
 [2 EVALUATION](#2-evaluation)<br/>
