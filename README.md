@@ -2,8 +2,8 @@
 
 [1 INTRODUCTION](#1-introduction)<br/>
 &emsp;[1.1 SPECIFICATION](#11-specification)<br/> 
-&emsp;&emsp;[1.1.1 UTILIZATION FOR ONE VMAF KERNEL](#111-utilization-for-one-vmaf-kernel)<br/>
-&emsp;&emsp;[1.1.2 BANDWIDTH FOR ONE VMAF KERNEL](#112-bandwidth-for-one-vmaf-kernel)<br/>
+&emsp;&emsp;[1.1.1 RESOURCE UTILIZATION](#111-resource-utilization)<br/>
+&emsp;&emsp;[1.1.2 BANDWIDTH CONSUMPTION](#112-bandwidth-consumption)<br/>
 &emsp;[1.2 PERFORMANCE FOR VARIOUS RESOLUTIONS](#12-performance-for-various-resolutions)<br/>
 &emsp;[1.3 BENCHMARK](#13-benchmark)<br/>
 [2 EVALUATION](#2-evaluation)<br/>
@@ -115,16 +115,16 @@ The following table shows the specification of Pulsar-VMAF targeted to Alveo U50
 - The performance was measured using the VMAF accelerator integrated in ffmpeg for both compressed and raw video cases.
 - ffmpeg version: git-2021-02-18-034e6e2
 
-### 1.1.1 Utilization for one vmaf kernel
-Utilization on AWS (VU9P)
+### 1.1.1 Resource utilization
+Utilization on AWS (VU9P), per kernel
   
 | LUT | Register | DSP | BRAM36 | URAM |
 |----:|---------:|----:|-------:|-----:|
 | 192,121 | 358,995 | 1,927 | 383 | 56 |
 
-### 1.1.2 Bandwidth for one vmaf kernel
+### 1.1.2 Bandwidth consumption
 - Condition : 4K@65fps (3840x2160) 
-- Measure of one vmaf kernel BW (without host BW)
+- Between the kernel and the memory inside the FPGA card, per kernel
 
 | Read BW [GBytes/s] | Write BW [GBytes/s] |
 |----------------:|----------------------:|
