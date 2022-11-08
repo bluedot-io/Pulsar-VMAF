@@ -432,7 +432,11 @@ To stop the DRM manager, please press CTRL+C.
 #### Measuring VMAF of compressed videos using one kernel
 Open another terminal then type the following command line.
 ```bash
-ffmpeg -i <transcoded_video_path> -vsync 0 -i <original_video_path> -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin -f null -
+ffmpeg -i <original_video_path> -i <transcoded_video_path> \
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
+            [1:v]setpts=PTS-STARTPTS[distorted]; \
+            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json" \
+    -f null -
 ```
 - <original_video_path>: a video file as reference one
 - <transcoded_video_path>: a transcoded video file from the original video file. If you have no transcoded one you can create it easily using ffmpeg as the following.
@@ -454,14 +458,51 @@ ffmpeg -i <transcoded_video_path> distorted.yuv
 ```
 Run the following command to measure VMAF score of those raw videos.   
 ```bash
+ffmpeg -video_size 3840x2160 -r 24 -pixel_format yuv420p -i reference.yuv \
+    -video_size 3840x2160 -r 24 -pixel_format yuv420p -i distorted.yuv \
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
+            [1:v]setpts=PTS-STARTPTS[distorted]; \
+            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json" \
+    -f null -
 ffmpeg -pix_fmt yuv420p -s 3840x2160 -i distorted.yuv -s 3840x2160 -pix_fmt yuv420p -i reference.yuv -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:shortest=1 -f null -
 ```
 The same score as the case of compressed videos is reported, and the speed is a little bit better due to less computation load on the CPUs.
 #### Running two kernels
 ```bash
-ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/etc/blutdoeedot/libbdvmaf/u50_binary.xclbin -f null -
-ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/etc/blutdoeedot/libbdvmaf/u50_binary.xclbin -f null -
+ffmpeg -i 2160_1.mp4 -i 2160_1_dst.mp4 -i 2160_2.mp4 -i 2160_2_dst.mp4\
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference1]; \
+            [1:v]setpts=PTS-STARTPTS[distorted1]; \
+            [distorted1][reference1]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf1.xml:model_path=vmaf_v0.6.1.json" \
+            -f null - \
+    -lavfi "[2:v]setpts=PTS-STARTPTS[reference2]; \
+            [3:v]setpts=PTS-STARTPTS[distorted2]; \
+            [distorted2][reference2]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf2.xml:model_path=vmaf_v0.6.1.json" \
+            -f null - 
 ```
+
+#### Distorted resolution different from reference resolution
+In case that the resolution of distorted frame is smaller than reference frame's,
+Pulsar-VMAF resize a distorted frame same as resolution of a refrence frame's.<br/>
+In opposite way, you need to resize the distorted frame or the reference frame using ffmpeg's scaler.
+<br/>
+Ex> reference: 3840x2160, distorted : 1920x1080
+```bash
+ffmpeg -i 2160.mp4 -i 1080.mp4 \
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
+            [1:v]setpts=PTS-STARTPTS[distorted]; \
+            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json" \
+    -f null -
+```
+<br/>
+Ex> reference: 1920x1080, distorted : 3840x2160
+```bash
+./ffmpeg -i 1080.mp4 -i 2160.mp4 \
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
+            [1:v]scale=1920:1080:flags=bicubic,setpts=PTS-STARTPTS[distorted]; \
+            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json" \
+    -f null -
+```
+
 # 3 DUAL-KERNEL PERFORMANCE IN AWS EC2 F1 INSTANCE
 In case that VMAF is measured for raw videos, the accelerator shows almost the best performance because there
 isn’t much computing load on the CPUs of the EC2 instance. But, when input videos are in compressed formats,
