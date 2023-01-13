@@ -33,7 +33,7 @@ choose f1.2xlarge
 
 ```bash
 chmod 600 <private_key_path>
-ssh -i <private_key_path> centos@<ip_address>
+ssh -i <private_key_path> ec2-user@<ip_address>
 ```
 Then you can see the following messages:
 ```
