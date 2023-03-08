@@ -218,7 +218,7 @@ If it’s correctly created an instance and connected to it, you can see the fol
                                                                                 info@blue-dot.io
 
 #### HOWTO ####
-ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/f1_binary.xclbin:log_path=test.xml -f null -
+ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/f1_binary.xclbin:log_path=test.xml:device=f1 -f null -
 You can run two ffmpegs in a f1.2xlarge, four ffmpegs in a f1.4xlarge
 ```
 The list of files is as follows at the initial connection:
@@ -233,7 +233,7 @@ In one f1.2xlarge instance, two kernels are instantiated. The following examples
 In the AMI installed, two video bistreams, 2160.mp4 and 2160_dst.mp4, are provided for examples.
 #### Measuring VMAF of compressed videos using one kernel
 ```bash
-ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
+ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:device=f1 -f null -
 ```
 - -stream_loop: an option to specify the number of repetition (you can remove it). In the above command, the video streams are decoded 100 times.
 
@@ -246,7 +246,7 @@ video:7852kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing 
 ```
 If you want to output scores of models per frame to a file, use "log_path" and "log_fmt" options as the following:
 ```bash
-ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:log_path=log.json:log_fmt=json -f null -
+ffmpeg -stream_loop 99 -i 2160_dst.mp4 -vsync 0 -stream_loop 99 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:log_path=log.json:log_fmt=json:device=f1 -f null -
 ```
 The supported output formats are json, xml and csv.
 
@@ -308,17 +308,17 @@ loading time of AFI(Amazon FPGA Image) into FPGA. The AFI is not loaded for the 
 The following example shows how to convert a compressed video to a raw video in YUV format.
 ```bash
 ffmpeg -i 2160.mp4 2160.yuv
-ffmpeg -I 2160_dst.mp4 2160_dst.yuv
+ffmpeg -i 2160_dst.mp4 2160_dst.yuv
 ```
 Run the following command to measure VMAF score of those raw videos.   
 ```bash
-ffmpeg -stream_loop 99 -pix_fmt yuv420p -s 3840x2160 -i 2160_dst.yuv -stream_loop 99 -s 3840x2160 -pix_fmt yuv420p -i 2160.yuv -lavfi libbdvmaf=model_path=vmaf_v0.6.1.json:kernel_path=f1_binary.xclbin:shortest=1 -f null -
+ffmpeg -stream_loop 99 -pix_fmt yuv420p -s 3840x2160 -i 2160_dst.yuv -stream_loop 99 -s 3840x2160 -pix_fmt yuv420p -i 2160.yuv -lavfi libbdvmaf=model_path=vmaf_v0.6.1.json:kernel_path=f1_binary.xclbin:shortest=1:device=f1 -f null -
 ```
 The same score as the case of compressed videos is reported, and the speed is a little bit better due to less computation load on the CPUs.
 #### Running two kernels
 ```bash
-ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
-ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin -f null -
+ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:device=f1 -f null -
+ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=vmaf_4k_v0.6.1.json:kernel_path=f1_binary.xclbin:device=f1 -f null -
 ```
 ## 2.2 AWS Marketplace
 You can also evaluate Pulsar-VMAF trial version in AWS marketplace.
@@ -435,7 +435,7 @@ Open another terminal then type the following command line.
 ffmpeg -i <original_video_path> -i <transcoded_video_path> \
     -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
             [1:v]setpts=PTS-STARTPTS[distorted]; \
-            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json" \
+            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json:device=f1" \
     -f null -
 ```
 - <original_video_path>: a video file as reference one
@@ -462,9 +462,9 @@ ffmpeg -video_size 3840x2160 -r 24 -pixel_format yuv420p -i reference.yuv \
     -video_size 3840x2160 -r 24 -pixel_format yuv420p -i distorted.yuv \
     -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
             [1:v]setpts=PTS-STARTPTS[distorted]; \
-            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json" \
+            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json:device=f1" \
     -f null -
-ffmpeg -pix_fmt yuv420p -s 3840x2160 -i distorted.yuv -s 3840x2160 -pix_fmt yuv420p -i reference.yuv -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:shortest=1 -f null -
+ffmpeg -pix_fmt yuv420p -s 3840x2160 -i distorted.yuv -s 3840x2160 -pix_fmt yuv420p -i reference.yuv -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:shortest=1:device=f1 -f null -
 ```
 The same score as the case of compressed videos is reported, and the speed is a little bit better due to less computation load on the CPUs.
 #### Running two kernels
@@ -472,11 +472,11 @@ The same score as the case of compressed videos is reported, and the speed is a 
 ffmpeg -i 2160_1.mp4 -i 2160_1_dst.mp4 -i 2160_2.mp4 -i 2160_2_dst.mp4\
     -lavfi "[0:v]setpts=PTS-STARTPTS[reference1]; \
             [1:v]setpts=PTS-STARTPTS[distorted1]; \
-            [distorted1][reference1]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf1.xml:model_path=vmaf_v0.6.1.json" \
+            [distorted1][reference1]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf1.xml:model_path=vmaf_v0.6.1.json:device=f1" \
             -f null - \
     -lavfi "[2:v]setpts=PTS-STARTPTS[reference2]; \
             [3:v]setpts=PTS-STARTPTS[distorted2]; \
-            [distorted2][reference2]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf2.xml:model_path=vmaf_v0.6.1.json" \
+            [distorted2][reference2]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf2.xml:model_path=vmaf_v0.6.1.json:device=f1" \
             -f null - 
 ```
 
@@ -490,7 +490,7 @@ Ex> reference: 3840x2160, distorted : 1920x1080
 ffmpeg -i 2160.mp4 -i 1080.mp4 \
     -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
             [1:v]setpts=PTS-STARTPTS[distorted]; \
-            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json" \
+            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json:device=f1" \
     -f null -
 ```
 <br/>
@@ -499,7 +499,7 @@ Ex> reference: 1920x1080, distorted : 3840x2160
 ./ffmpeg -i 1080.mp4 -i 2160.mp4 \
     -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
             [1:v]scale=1920:1080:flags=bicubic,setpts=PTS-STARTPTS[distorted]; \
-            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json" \
+            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json:device=f1" \
     -f null -
 ```
 
@@ -564,106 +564,132 @@ EC2 F1 Instance details (https://aws.amazon.com/ec2/instance-types/f1/)
 
 
 # 4 REST API
-Pulsar-VMAF provides REST API.
-
---- 
-**Note** 
-> Current version of the REST API is alpha release. We're working on adding more useful functionalities and making it stable.
-
----
-
-## 4.1 HOWTO
-### Creating an account
-You can create your account using the REST API.
-```bash
-curl https://api.kokoon.cloud/auth/signup -X POST \
--H 'Content-Type: application/json' \
--d '{"email": "<email address>", "password": "<password>", "nickname": "<nickname>"}'
-
--- response --
-
-"" <-- success message
-```
-
-You'll get empty message with the status code of 200 if no error.
-To verify your email address, we send an email to your email address with a verification code.
-Once you receive the verification code, send us the code using the REST API as the following to activate your account
-```bash
-curl https://api.kokoon.cloud/auth/signup/confirm -X POST \
--H 'Content-Type: application/json' \
--d '{"email": "<email address>", "code": "<confirmation code>"}'
-
--- response --
-
-"" <-- success message
-```
-It is success if the API returns empty message.
-
-
-### Login
-You need to get a JWT key to access the REST APIs. You can simply get the JWT key as the following:
-```bash
-curl https://api.kokoon.cloud/auth -X POST --user '<email address>:<your password>'
-
--- response --
-{"id": "17xxxxd2-3xx4-4xx0-8xx4-3xxxxxxxxxx2", "token": "eyJraWQiO...-yMkzfA4DTnNOfZ0Og", "exp": 3600}
-```
-
-The API returns your id, JWT token and expiration time in second as the above.
-You should include the token for every HTTP requests. 
+Once created a F1 instance with Pulsa-VMAF AMI in the AWS Marketplace, the EC2 instance works as an application server.
 
 ### Executing Pulsar-VMAF
-The Pulsar-VMAF REST API requires two parameters: one is reference video, the other is distorted video.
-Each video can be accessible through HTTP protocol.
 
 ```bash
-curl https://api.kokoon.cloud/vmaf -X POST \
+curl http://<ip-address>/vmaf -X POST \
 -H 'Content-Type: application/json' \
--H 'Authorization: bearer eeyJra.eyJzdWIiOiIxN2Y0OGRkMi0zMjk0LTQ4ZTAtO...-yMkzfA4DTnNOfZ0Og' \
--d '{"ref": "https://s3.amazonaws.com/mytest/reference.mp4", "dst": "https://s3.amazonaws.com/mytest/distortion.mp4"}'
+-d '{ \
+"ref": <URL of the reference video file>, \
+"dst": <URL of the distorted video file>, \
+"frames": <number_of_frames>, \
+"aws_access_key_id": <AWS_ACCESS_KEY_ID>, \
+"aws_secret_access_key": <AWS_SECRET_ACCESS_KEY>}'
 
 -- response --
-{"task_id": "9ffc50e2-5197-34bb-aaf6-cd1da79f591b", "update_period": 5, "progress": "in-queue"}
+{
+  "task_id": "9ffc50e2-5197-34bb-aaf6-cd1da79f591b", 
+  "task_result_url": "http://<ip-address>/9ffc50e2-5197-34bb-aaf6-cd1da79f591b"
+}
 ```
 
-Once the task is finished, you'll receive an email as following:
-```
-Hello,
+<b>Parameters</b>
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ref</td>
+      <td>[Required] URL of Reference(original video) file. Supported protocols are http, https, s3, file</td>
+    </tr>
+    <tr>
+      <td>dst</td>
+      <td>[Required] URL of Distorted video from tde original video. Supported protocls are http, https, s3, file</td>
+    </tr>
+    <tr>
+      <td>frames</td>
+      <td>[Optional] The number of frames to be processed.</td>
+    </tr>
+    <tr>
+      <td>aws_access_key_id</td>
+      <td>AWS access key id from AWS IAM. It is REQUIRED where reference and distorted video are stored in AWS S3.</td>
+    </tr>
+    <tr>
+      <td>aws_secret_access_key</td>
+      <td>AWS secret access key from AWS IAM. It is REQUIRED where reference and distorted video are stored in AWS S3.</td>
+    </tr>
+  </tbody>
+</table>
 
-Your job has been done.
+<b>Returns</b>
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>task_id</td>
+      <td>Unique id of the task. You can get the status and the result of the task with the id.</td>
+    </tr>
+    <tr>
+      <td>task_result_url</td>
+      <td>You can monitor the status of the task and get the result from the task_info_url.</td>
+    </tr>
+  </tbody>
+</table>
 
-
-
-Task ID: 9ffc50e2-5197-34bb-aaf6-cd1da79f591b
-Reference video: https://s3.amazonaws.com/mytest/reference.mp4
-Distorted video: https://s3.amazonaws.com/mytest/distortion.mp4
-
-VMAF Score: 75.637862
-LOG URL   : /fileurl/vmaf/9f971f82-0ecb-11ec-b399-0e1904df6487
-```
-
-### Downloading the log file 
-You can get download url by the following command line.
+### Getting status of the task and its results.
 ```bash
-curl https://api.kokoon.cloud/fileurl/vmaf/9f971f82-0ecb-11ec-b399-0e1904df6487 -X POST \
--H 'Content-Type: application/json' \
--H 'Authorization: bearer eeyJraWQiOiJxTHJoRVp5bTFDODF0NkJvVlVxVExxU2s2QUJTWGVWTjRQbU1LcW9aSEF
-FPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIxN2Y0OGRkMi0zMjk0LTQ4ZTAtO...-yMkzfA4DTnNOfZ0Og' 
-
--- response --
-{"download_url": "https://startrekapp152952-prod.s3.amazonaws.com/private/us-east-1%3A08920b4c
--885d-4173-86f9-f85f85305b90/vmaf/log/238da3ac-0e99-11ec-879e-0ef222c9480d?AWSAccessKeyId=AS...
-CBB75&Signature=7ihve2PPG%2BDUwGlj4qDw8sjXpTY%3D&x-amz-security-token=FwoGZXIvYXdzEDAaDNMKmxB...
-coiYbViQYyKJ57Hpw88vT%2BOV3rhMiurzbxmx%2Fprp6tirQcSgL4qOfkSDh0%2B1Nw6Bc%3D&Expires=1630885114"}
+curl http://<ip-address>/<task_id> -X GET \
+-H 'Accept: application/json' 
 ```
 
-Now you can download log file from "download_url" of the above result.
-
+You'll receive the following result while the task is running.
 ```bash
-curl -o result.log https://startrekapp152952-prod.s3.amazonaws.com/private/us-east-1%3A08920b4c-
-885d-4173-86f9-f85f85305b90/vmaf/log/238da3ac-0e99-11ec-879e-0ef222c9480d?AWSAccessKeyId=AS...CB
-B75&Signature=7ihve2PPG%2BDUwGlj4qDw8sjXpTY%3D&x-amz-security-token=FwoGZXIvYXdzEDAaDNMKmxB...co
-iYbViQYyKJ57Hpw88vT%2BOV3rhMiurzbxmx%2Fprp6tirQcSgL4qOfkSDh0%2B1Nw6Bc%3D&Expires=1630885114
+{
+  "status": "ready" or "running" 
+}
+```
+
+When the task is done, you can get the result of the task as the following:
+```bash
+{
+  "status": "done",
+  "vmaf": {
+    "min": 56.664034,
+    "max": 100.000000,
+    "mean": 83.260948
+  },
+  "log_url": "http://<ip-address>/<task_id>/result.json"
+}
+```
+<b>Returns</b>
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>status</td>
+      <td>status of the task. "ready", "running" or "done"</td>
+    </tr>
+    <tr>
+      <td>vmaf</td>
+      <td>The summary of the result when the value of the status is "done".</td>
+    </tr>
+    <tr>
+      <td>log_url</td>
+      <td>URL of the log file which has more informations of the result.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+### Downloading the log file
+```bash
+curl -o result.log http://<ip-address>/<task_id>/result.json
 
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
@@ -677,6 +703,8 @@ iYbViQYyKJ57Hpw88vT%2BOV3rhMiurzbxmx%2Fprp6tirQcSgL4qOfkSDh0%2B1Nw6Bc%3D&Expires
 ## 5.2 ffmpeg-bluedot
 [1-0.9]
 - Removed coreno option of libbdvmaf filter.<br/>
+[2.0.0]
+- renewal REST API
 
 
 # 6 CONTACT US
