@@ -218,7 +218,7 @@ If it’s correctly created an instance and connected to it, you can see the fol
                                                                                 info@blue-dot.io
 
 #### HOWTO ####
-ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/f1_binary.xclbin:log_path=test.xml:device=f1 -f null -
+ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/usr/share/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/usr/share/libbdvmaf/f1_binary.xclbin:log_path=test.xml:device=f1 -f null -
 You can run two ffmpegs in a f1.2xlarge, four ffmpegs in a f1.4xlarge
 ```
 The list of files is as follows at the initial connection:
@@ -393,7 +393,7 @@ sudo yum-config-manager --add-repo https://tech.accelize.com/rpm/accelize_stable
 sudo yum install -y libaccelize-drm
 sudo yum-config-manager --add-repo http://bluedot-yum-repo.s3-website-us-east-1.amazonaws.com/bluedot-yum.repo
 sudo yum install epel-release
-sudo yum install libbdvmaf-u50
+sudo yum install libbdvmaf-drm
 sudo yum install ffmpeg-bluedot-vmaf
 ```
 > :information_source: **Your system may require more rpm packages such as libXv, libav, etc for ffmpeg**
@@ -412,9 +412,9 @@ You should copy conf.json and cred.json in the working directory beacuse the DRM
 
 Please open your terminal for the DRM manager.
 ```bash
-cp /etc/bluedot/libbdvmaf/conf.json .
+cp /usr/share/libbdvmaf/conf.json .
 cp <your_download_folder>/cred.json .
-bddrm.exe /etc/bluedot/libbdvmaf/u50_binary.xclbin
+bddrm.exe /usr/share/libbdvmaf/u50_binary.xclbin
 ```
 You can see the following messsages if your credential file is valid.
 ```bash
@@ -435,7 +435,7 @@ Open another terminal then type the following command line.
 ffmpeg -i <original_video_path> -i <transcoded_video_path> \
     -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
             [1:v]setpts=PTS-STARTPTS[distorted]; \
-            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json:device=f1" \
+            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/usr/share/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json:device=f1" \
     -f null -
 ```
 - <original_video_path>: a video file as reference one
@@ -462,9 +462,9 @@ ffmpeg -video_size 3840x2160 -r 24 -pixel_format yuv420p -i reference.yuv \
     -video_size 3840x2160 -r 24 -pixel_format yuv420p -i distorted.yuv \
     -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
             [1:v]setpts=PTS-STARTPTS[distorted]; \
-            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json:device=f1" \
+            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/usr/share/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json:device=f1" \
     -f null -
-ffmpeg -pix_fmt yuv420p -s 3840x2160 -i distorted.yuv -s 3840x2160 -pix_fmt yuv420p -i reference.yuv -lavfi libbdvmaf=model_path=/etc/bluedot/libbdvmaf/vmaf_v0.6.1.json:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:shortest=1:device=f1 -f null -
+ffmpeg -pix_fmt yuv420p -s 3840x2160 -i distorted.yuv -s 3840x2160 -pix_fmt yuv420p -i reference.yuv -lavfi libbdvmaf=model_path=/usr/share/libbdvmaf/vmaf_v0.6.1.json:kernel_path=/usr/share/libbdvmaf/u50_binary.xclbin:shortest=1:device=f1 -f null -
 ```
 The same score as the case of compressed videos is reported, and the speed is a little bit better due to less computation load on the CPUs.
 #### Running two kernels
@@ -472,11 +472,11 @@ The same score as the case of compressed videos is reported, and the speed is a 
 ffmpeg -i 2160_1.mp4 -i 2160_1_dst.mp4 -i 2160_2.mp4 -i 2160_2_dst.mp4\
     -lavfi "[0:v]setpts=PTS-STARTPTS[reference1]; \
             [1:v]setpts=PTS-STARTPTS[distorted1]; \
-            [distorted1][reference1]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf1.xml:model_path=vmaf_v0.6.1.json:device=f1" \
+            [distorted1][reference1]libbdvmaf=log_fmt=xml:kernel_path=/usr/share/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf1.xml:model_path=vmaf_v0.6.1.json:device=f1" \
             -f null - \
     -lavfi "[2:v]setpts=PTS-STARTPTS[reference2]; \
             [3:v]setpts=PTS-STARTPTS[distorted2]; \
-            [distorted2][reference2]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf2.xml:model_path=vmaf_v0.6.1.json:device=f1" \
+            [distorted2][reference2]libbdvmaf=log_fmt=xml:kernel_path=/usr/share/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf2.xml:model_path=vmaf_v0.6.1.json:device=f1" \
             -f null - 
 ```
 
@@ -490,7 +490,7 @@ Ex> reference: 3840x2160, distorted : 1920x1080
 ffmpeg -i 2160.mp4 -i 1080.mp4 \
     -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
             [1:v]setpts=PTS-STARTPTS[distorted]; \
-            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json:device=f1" \
+            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/usr/share/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json:device=f1" \
     -f null -
 ```
 <br/>
@@ -499,7 +499,7 @@ Ex> reference: 1920x1080, distorted : 3840x2160
 ./ffmpeg -i 1080.mp4 -i 2160.mp4 \
     -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
             [1:v]scale=1920:1080:flags=bicubic,setpts=PTS-STARTPTS[distorted]; \
-            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/etc/bluedot/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json:device=f1" \
+            [distorted][reference]libbdvmaf=log_fmt=xml:kernel_path=/usr/share/libbdvmaf/u50_binary.xclbin:log_path=libbdvamf.xml:model_path=vmaf_v0.6.1.json:device=f1" \
     -f null -
 ```
 
