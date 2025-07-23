@@ -710,4 +710,4 @@ curl -o result.log http://<ip-address>/<task_id>/result.json
 # 6 CONTACT US
 
 For evaluation of the product, please visit https://blue-dot.io/Evaluation.
-For technical problems and questions, feel free to email us at <info@blue-dot.io>
+For technical problems and questions, feel free to email us at <contact@blue-dot.io>
