@@ -215,7 +215,7 @@ If it’s correctly created an instance and connected to it, you can see the fol
 |___|    |_______||_______||_______||__| |__||___|  |_|         |___|  |_|   |_||__| |__||___|
 
                                                                              https://blue-dot.io
-                                                                                info@blue-dot.io
+                                                                             contact@blue-dot.io
 
 #### HOWTO ####
 ffmpeg -i 2160_dst.mp4 -vsync 0 -i 2160.mp4 -vsync 0 -lavfi libbdvmaf=model_path=/usr/share/libbdvmaf/vmaf_4k_v0.6.1.json:kernel_path=/usr/share/libbdvmaf/f1_binary.xclbin:log_path=test.xml:device=f1 -f null -
